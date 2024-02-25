@@ -1,4 +1,4 @@
-import express from "express"
+import express, { response } from "express"
 import axios from "axios"
 import currencyapi from '@everapi/currencyapi-js'
 const app = express()
@@ -50,6 +50,31 @@ const apiCall = app.get('/currencyCall', async(req, res)=>{
     // const filteredCurrencyData = funt(response.data)
     res.send(filteredCurrencyData)
     
+
+})
+
+const listCurrencies = app.get('/getAllCurrencies', async(req, res)=>{
+    const currencies = []
+    const client = new currencyapi('cur_live_6reAvlKGWeBLnujb3rPldrm7PM29BHi3YuZXJG1V')
+    const response = await client.currencies()
+    const filteredCurrencyData = filterCurrencyData(response.data)
+    for (const key in filteredCurrencyData){
+        if(filteredCurrencyData.hasOwnProperty(key)){
+            console.log('Key', key);
+            console.log('Value', filteredCurrencyData[key].name)
+            const currencyObj = {
+                "key": key,
+                "name": filteredCurrencyData[key].name,
+                "symbol": filteredCurrencyData[key].symbol
+            }
+            currencies.push(currencyObj)
+        }
+        
+
+    }
+    // console.log(filteredCurrencyData)
+    console.log(typeof(filteredCurrencyData))
+    res.status(200).send(currencies)
 
 })
 
