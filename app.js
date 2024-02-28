@@ -3,6 +3,7 @@ import axios from "axios"
 import currencyapi from '@everapi/currencyapi-js'
 const app = express()
 const PORT = 6700
+const client = new currencyapi('cur_live_6reAvlKGWeBLnujb3rPldrm7PM29BHi3YuZXJG1V')
 
 function filterCurrencyData(data) {
     const filteredData = {};
@@ -17,16 +18,9 @@ function filterCurrencyData(data) {
     }
     return filteredData;
 }
-function funt (data){
-    const currencies = []
-    for (const key in data){
-        currencies.push(key)
-    }
-    return currencies
-}
 
 const home = app.get('/homepage', (req, res)=>{
-    res.send('Conversion happened')
+    res.send('Welcome, stay  bit')
 })
 
 const convert = app.post('/convert', (req, res)=>{
@@ -39,12 +33,6 @@ const convert = app.post('/convert', (req, res)=>{
 
 const apiCall = app.get('/currencyCall', async(req, res)=>{
     // const response = await axios.get("https://api.currencyapi.com/v3/latest&apiKey='cur_live_6reAvlKGWeBLnujb3rPldrm7PM29BHi3YuZXJG1V'")
-    // res.json(response)
-    // console.log(response.data)
-
-
-    const client = new currencyapi('cur_live_6reAvlKGWeBLnujb3rPldrm7PM29BHi3YuZXJG1V')
-
     const response = await client.currencies()
     const filteredCurrencyData = filterCurrencyData(response.data)
     // const filteredCurrencyData = funt(response.data)
@@ -60,8 +48,8 @@ const listCurrencies = app.get('/getAllCurrencies', async(req, res)=>{
     const filteredCurrencyData = filterCurrencyData(response.data)
     for (const key in filteredCurrencyData){
         if(filteredCurrencyData.hasOwnProperty(key)){
-            console.log('Key', key);
-            console.log('Value', filteredCurrencyData[key].name)
+            // console.log('Key', key);
+            // console.log('Value', filteredCurrencyData[key].name)
             const currencyObj = {
                 "key": key,
                 "name": filteredCurrencyData[key].name,
@@ -77,6 +65,27 @@ const listCurrencies = app.get('/getAllCurrencies', async(req, res)=>{
     res.status(200).send(currencies)
 
 })
+
+const currencyInfo = app.get(`/currency`, async(req, res)=>{
+    const response = await client.currencies()
+    const currencies = filterCurrencyData(response.data)
+    for (const key in currencies){
+        
+    }
+    console.log(req.query.currencyid)
+    if(req.query.currencyid === 'undefined' || req.query.currencyid === 'null'){
+        return res.status(400).send('There is no currencyid passed')
+
+    }
+    if(req.query.currencyid){
+        return 
+
+    }
+    // console.log(key)
+    res.send("Hi")
+
+})
+
 
 
 
